@@ -18,9 +18,11 @@ public class DownloadService extends Service {
     private DownloadTask downloadTask;
     private String downloadUrl;
     private DownloadListener listener = new DownloadListener() {
+        //匿名類中實現方法
         @Override
         public void onProgress(int progress) {
-            getNotifictionManager().notify(1, getNotification("Downloading……",progress));
+            getNotifictionManager().notify(1, getNotification("Downloading……", progress));
+            //顯示下載進度的通知，NotificationManager的notify()方法觸發通知
         }
 
         @Override
@@ -28,8 +30,10 @@ public class DownloadService extends Service {
             downloadTask = null;
             //下載成功時將前台服務通知關閉，并創建一個下載成功的通知
             stopForeground(true);
-            getNotifictionManager().notify(1 , getNotification("Download Success", -1));
+            getNotifictionManager().notify(1, getNotification("Download Success", -1));
+            //用來關掉正在下載的前台通知
             Toast.makeText(DownloadService.this, "Download success", Toast.LENGTH_SHORT).show();
+            //新建一個Toast告訴用戶已經下載完成了
         }
 
         @Override
@@ -37,7 +41,7 @@ public class DownloadService extends Service {
             downloadTask = null;
             //下載失敗時將前台服務通知關閉,並創建一個下載失敗的通知
             stopForeground(true);
-            getNotifictionManager().notify(1 , getNotification("Download Failed" , -1));
+            getNotifictionManager().notify(1, getNotification("Download Failed", -1));
             Toast.makeText(DownloadService.this, "Download Failed", Toast.LENGTH_SHORT).show();
         }
 
@@ -55,43 +59,37 @@ public class DownloadService extends Service {
         }
     };
     private DownloadBinder mBinder = new DownloadBinder();
-    public DownloadService() {
-    }
-    class DownloadBinder extends Binder
-    {
-        public void startDownload(String url)
-        {
-            if(downloadTask == null)
-            {
+
+
+    class DownloadBinder extends Binder {
+        public void startDownload(String url) {
+            if (downloadTask == null) {
                 downloadUrl = url;
                 downloadTask = new DownloadTask(listener);
+                //创建了一个DownloadTask的实例，把刚才的DownloadListener作为参数传进去
                 downloadTask.execute(downloadUrl);
                 startForeground(1, getNotification("Downloading……", 0));
                 Toast.makeText(DownloadService.this, "Downloading……", Toast.LENGTH_SHORT).show();
             }
         }
-        public void pauseDownload()
-        {
-            if(downloadTask != null)
-            {
+
+        public void pauseDownload() {
+            if (downloadTask != null) {
                 downloadTask.pauseDownload();
             }
         }
-        public void cancelDownload()
-        {
-            if(downloadTask != null)
-            {
+
+        public void cancelDownload() {
+            //取消下載
+            if (downloadTask != null) {
                 downloadTask.cancelDownload();
-            }else
-            {
-                if(downloadUrl != null)
-                {
+            } else {
+                if (downloadUrl != null) {
                     //取消下載時需將文件刪除，並將通知關閉
                     String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/"));
                     String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
                     File file = new File(directory + fileName);
-                    if(file.exists())
-                    {
+                    if (file.exists()) {
                         file.delete();
                     }
                     getNotifictionManager().cancel(1);
@@ -101,29 +99,28 @@ public class DownloadService extends Service {
             }
         }
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private NotificationManager getNotifictionManager()
-    {
+    private NotificationManager getNotifictionManager() {
         return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
-    private Notification getNotification(String title, int progress)
-    {
-        Intent intent = new Intent(this,MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this,0,intent,0);
+
+    private Notification getNotification(String title, int progress) {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         builder.setContentIntent(pi);
         builder.setContentTitle(title);
-        if(progress > 0)
-        {
+        if (progress > 0) {
             //當progress大於或等於0時才需要顯示下載速度
             builder.setContentText(progress + "%")
-                    .setProgress(100, progress , false);
+                    .setProgress(100, progress, false);
         }
         return builder.build();
     }

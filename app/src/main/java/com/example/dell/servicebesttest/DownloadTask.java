@@ -73,16 +73,12 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
                 byte[] b = new byte[1024];
                 int total = 0;
                 int len;
-                while ((len = is.read(b)) != -1)
-                {
-                    if (isCanceled)
-                    {
+                while ((len = is.read(b)) != -1) {
+                    if (isCanceled) {
                         return TYPE_CANCELED;//取消操作
-                    } else if (isPaused)
-                    {
+                    } else if (isPaused) {
                         return TYPE_PAUSED;//中斷操作
-                    } else
-                    {
+                    } else {
                         total += len;
                         savedFile.write(b, 0, len);
                         //计算已经下载的百分比
@@ -146,25 +142,21 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
         }
     }
 
-    public void pauseDownload()
-    {
+    public void pauseDownload() {
         isPaused = true;//暫停工作
     }
 
-    public void cancelDownload()
-    {
+    public void cancelDownload() {
         isCanceled = true;//取消工作
     }
 
-    private long getContentLength(String downloadUrl) throws IOException
-    {
+    private long getContentLength(String downloadUrl) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(downloadUrl)
                 .build();
         Response response = client.newCall(request).execute();
-        if (response != null && response.isSuccessful())
-        {
+        if (response != null && response.isSuccessful()) {
             long contentLength = response.body().contentLength();
             response.close();
             return contentLength;
