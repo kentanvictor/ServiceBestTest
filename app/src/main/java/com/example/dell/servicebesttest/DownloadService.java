@@ -127,6 +127,7 @@ public class DownloadService extends Service {
             /**setProgress参数中第一个参数指的是传入通知的最大进度
              * 第二个参数是传入通知的当前进度
              * 第三个参数表示是否使用模糊进度条
+             * 这样子在通知上就会有进度条出来了
              */
         }
         return builder.build();
