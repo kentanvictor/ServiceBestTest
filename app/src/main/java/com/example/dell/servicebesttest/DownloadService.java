@@ -68,7 +68,9 @@ public class DownloadService extends Service {
                 downloadTask = new DownloadTask(listener);
                 //创建了一个DownloadTask的实例，把刚才的DownloadListener作为参数传进去
                 downloadTask.execute(downloadUrl);
+                //调用execute方法，开启下载，并将下载文件的URL传入到execute里面
                 startForeground(1, getNotification("Downloading……", 0));
+                //调用startForeground方法使得下载服务成为一个前台服务
                 Toast.makeText(DownloadService.this, "Downloading……", Toast.LENGTH_SHORT).show();
             }
         }
@@ -76,6 +78,7 @@ public class DownloadService extends Service {
         public void pauseDownload() {
             if (downloadTask != null) {
                 downloadTask.pauseDownload();
+                //调用一下downloadTask中的pauseDownload方法
             }
         }
 
@@ -121,6 +124,10 @@ public class DownloadService extends Service {
             //當progress大於或等於0時才需要顯示下載速度
             builder.setContentText(progress + "%")
                     .setProgress(100, progress, false);
+            /**setProgress参数中第一个参数指的是传入通知的最大进度
+             * 第二个参数是传入通知的当前进度
+             * 第三个参数表示是否使用模糊进度条
+             */
         }
         return builder.build();
     }
