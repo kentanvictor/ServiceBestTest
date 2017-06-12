@@ -18,9 +18,11 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private DownloadService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
+        //创建ServiceConnection的匿名内部类
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             downloadBinder = (DownloadService.DownloadBinder) service;
+            //获取DownloadBinder的实例
         }
 
         @Override
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 PackageManager.PERMISSION_GRANTED)
         {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+            //获取读写SD卡的权限
         }
     }
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         switch (v.getId()) {
+            //判断点击事件
             case R.id.start_download:
                 String url = "https://raw.githubsercontent.com/guolindev/eclipes/master/eclipes-inst-win64.exe";
                 downloadBinder.startDownload(url);
@@ -84,5 +88,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connection);
+        //对服务进行解绑工作
     }
 }
