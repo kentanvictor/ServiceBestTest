@@ -1,31 +1,27 @@
 package com.example.dell.servicebesttest;
 
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
-import okhttp3.Connection;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private DownloadService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
+            downloadBinder = (DownloadService.DownloadBinder) service;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            downloadBinder = (DownloadService.DownloadBinder)Service;
         }
-    }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(Connection);
+        unbindService(connection);
     }
 }
